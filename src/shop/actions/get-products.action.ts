@@ -1,10 +1,30 @@
 import { tesloApi } from "@/api/teslo-api";
 import type { ProductsResponse } from "@/interfaces/products.response";
+import type { Gender, Size } from "@/types/common";
 
 // localhost:3000/api/files/product/1703767-00-A_0_2000.jpg
 
-export const getProductsAction = async (): Promise<ProductsResponse> => {
-  const { data } = await tesloApi.get<ProductsResponse>("/products");
+interface Options {
+  offset?: number | string;
+  limit?: number | string;
+  gender?: Gender;
+  sizes?: Size;
+}
+
+export const getProductsAction = async ({
+  offset,
+  gender,
+  limit,
+  sizes,
+}: Options): Promise<ProductsResponse> => {
+  const { data } = await tesloApi.get<ProductsResponse>("/products", {
+    params: {
+      offset: offset,
+      limit: limit,
+      gender: gender,
+      sizes: sizes,
+    },
+  });
 
   const productsWithImageUrl = data.products.map((p) => ({
     ...p,
