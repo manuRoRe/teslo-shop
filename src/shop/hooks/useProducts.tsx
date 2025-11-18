@@ -44,7 +44,7 @@ export const useProducts = () => {
         sizes: sizes,
         minPrice: !minPrice ? undefined : Number(minPrice),
         maxPrice: !maxPrice ? undefined : Number(maxPrice),
-        q: query,
+        query: query,
       }),
     staleTime: 1000 * 5 * 60,
   });
