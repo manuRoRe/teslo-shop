@@ -8,7 +8,6 @@ export const useProducts = () => {
 
   const limit = searchParams.get("limit") || 9;
   const page = searchParams.get("page") || 1;
-
   const offset = (Number(page) - 1) * Number(limit);
 
   const sizes = (searchParams.get("sizes") || []) as Size;
@@ -16,14 +15,36 @@ export const useProducts = () => {
 
   const genderPage: Gender = (!gender ? "" : gender) as Gender;
 
+  const filterPrice = searchParams.get("price") || "any";
+
+  let minPrice = undefined;
+  let maxPrice = undefined;
+
+  if (filterPrice !== "any") {
+    if (filterPrice?.includes("+")) {
+      minPrice = 200;
+    } else {
+      minPrice = filterPrice.split("-")[0];
+      maxPrice = filterPrice.split("-")[1];
+    }
+  }
+
+  const query = searchParams.get("query") || undefined;
+
   return useQuery({
-    queryKey: ["products", { offset, limit, gender, sizes }],
+    queryKey: [
+      "products",
+      { offset, limit, gender, sizes, minPrice, maxPrice, query },
+    ],
     queryFn: () =>
       getProductsAction({
         limit: limit,
         offset: isNaN(offset) ? 0 : offset,
         gender: genderPage,
         sizes: sizes,
+        minPrice: !minPrice ? undefined : Number(minPrice),
+        maxPrice: !maxPrice ? undefined : Number(maxPrice),
+        q: query,
       }),
     staleTime: 1000 * 5 * 60,
   });
