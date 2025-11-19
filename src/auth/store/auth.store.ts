@@ -9,6 +9,7 @@ type AuthState = {
   token: string | null;
   authStatus: AuthStatus;
   //Getters
+  getInitials: (fullname: string) => string;
 
   //Actions
   login: (email: string, password: string) => Promise<boolean>;
@@ -37,5 +38,12 @@ export const useAuthStore = create<AuthState>()((set) => ({
   logout: () => {
     set({ user: null, token: null, authStatus: "non-authenticated" });
     localStorage.removeItem("token");
+  },
+  getInitials(fullname: string) {
+    const nameSplited = fullname.split(" ");
+    const initials = nameSplited.map((n) => {
+      return n.substring(0, 1);
+    });
+    return initials.join("");
   },
 }));
