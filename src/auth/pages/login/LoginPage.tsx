@@ -6,11 +6,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CustomLogo } from "@/components/custom/CustomLogo";
-import { loginAction } from "@/auth/actions/login.action";
 import { toast } from "sonner";
+import { useAuthStore } from "@/auth/store/auth.store";
 
 export const LoginPage = () => {
   const navigate = useNavigate();
+  const { login } = useAuthStore();
 
   const [isPosting, setIsPosting] = useState(false);
 
@@ -24,17 +25,14 @@ export const LoginPage = () => {
 
     //console.log({ email, password });
 
-    try {
-      const data = await loginAction({ email, password });
-      localStorage.setItem("token", data.token);
-
-      console.log("redireccionando al home");
+    const isLogued = await login(email, password);
+    if (isLogued) {
       navigate("/");
-    } catch (error) {
-      toast.error("Email o contraseña incorrectos");
-    } finally {
-      setIsPosting(false);
+      return;
     }
+
+    toast.error("Email o contraseña incorrectos");
+    setIsPosting(false);
   };
 
   return (

@@ -16,8 +16,6 @@ export const loginAction = async ({
       password: password,
     });
 
-    console.log({ data });
-
     return data;
   } catch (error) {
     console.log(error);
