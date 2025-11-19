@@ -11,6 +11,7 @@ type AuthState = {
 
   //Actions
   login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
 };
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -30,5 +31,9 @@ export const useAuthStore = create<AuthState>()((set) => ({
       localStorage.removeItem("token");
       return false;
     }
+  },
+  logout: () => {
+    set({ user: null, token: null });
+    localStorage.removeItem("token");
   },
 }));
