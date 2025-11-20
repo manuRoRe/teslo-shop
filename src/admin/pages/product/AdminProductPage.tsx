@@ -4,19 +4,6 @@ import { useProduct } from "@/admin/hooks/useProduct";
 import { CustomFullScreamLoading } from "@/components/custom/CustomFullScreamLoading";
 import { ProductForm } from "./ui/ProductForm";
 
-interface Product {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  slug: string;
-  stock: number;
-  sizes: string[];
-  gender: string;
-  tags: string[];
-  images: string[];
-}
-
 export const AdminProductPage = () => {
   const { id } = useParams();
 
