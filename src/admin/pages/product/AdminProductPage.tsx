@@ -1,10 +1,12 @@
 import { AdminTitle } from "@/admin/components/AdminTitle";
-import { useParams } from "react-router";
+import { Navigate, useParams } from "react-router";
 
 import { useState } from "react";
 import { X, Plus, Upload, Tag, SaveAll } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router";
+import { useProduct } from "@/admin/hooks/useProduct";
+import { CustomFullScreamLoading } from "@/components/custom/CustomFullScreamLoading";
 
 interface Product {
   id: string;
@@ -21,6 +23,8 @@ interface Product {
 
 export const AdminProductPage = () => {
   const { id } = useParams();
+
+  const { isError, isLoading, data: product2 } = useProduct(id || "");
 
   const productTitle = id === "new" ? "Nuevo producto" : "Editar producto";
   const productSubtitle =
@@ -51,6 +55,9 @@ export const AdminProductPage = () => {
   const [dragActive, setDragActive] = useState(false);
 
   const availableSizes = ["XXS", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+
+  if (isError) return <Navigate to="/admin/products"></Navigate>;
+  if (isLoading) return <CustomFullScreamLoading></CustomFullScreamLoading>;
 
   const handleInputChange = (field: keyof Product, value: string | number) => {
     setProduct((prev) => ({ ...prev, [field]: value }));
