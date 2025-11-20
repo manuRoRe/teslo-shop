@@ -1,3 +1,4 @@
+import type { PropsWithChildren } from "react";
 import { RouterProvider } from "react-router";
 import { appRouter } from "./app.router";
 
@@ -8,16 +9,17 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { Toaster } from "sonner";
-import type { PropsWithChildren } from "react";
-import { checkAuthAction } from "./auth/actions/check-auth.action";
 import { CustomFullScreamLoading } from "./components/custom/CustomFullScreamLoading";
+import { useAuthStore } from "./auth/store/auth.store";
 
 const queryClient = new QueryClient();
 
 const CheckAuthProvider = ({ children }: PropsWithChildren) => {
+  const { checkAuthStatus } = useAuthStore();
+
   const { isLoading } = useQuery({
     queryKey: ["auth"],
-    queryFn: checkAuthAction,
+    queryFn: checkAuthStatus,
     retry: false,
     refetchInterval: 1000 * 60 * 1.5,
   });
