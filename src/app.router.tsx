@@ -7,9 +7,13 @@ import { ProductPage } from "./shop/pages/product/ProductPage";
 import { GenderPage } from "./shop/pages/gender/GenderPage";
 import { LoginPage } from "./auth/pages/login/LoginPage";
 import { RegisterPage } from "./auth/pages/register/RegisterPage";
-import { DashboardPage } from "./admin/pages/dashboard/DashboardPage";
 import { AdminProductsPage } from "./admin/pages/products/AdminProductsPage";
 import { AdminProductPage } from "./admin/pages/product/AdminProductPage";
+import {
+  AdminRoute,
+  NotAuthenticatedRoute,
+} from "./components/routes/ProtectedRoutes";
+import { DashboardPage } from "./admin/pages/dashboard/Dashboardpage";
 
 //import { AuthLayout } from "./auth/layouts/AuthLayout";
 //import { AdminLayout } from "./admin/layouts/AdminLayout";
@@ -41,7 +45,11 @@ export const appRouter = createBrowserRouter([
   //Auth routes
   {
     path: "/auth",
-    element: <AuthLayout></AuthLayout>,
+    element: (
+      <NotAuthenticatedRoute>
+        <AuthLayout></AuthLayout>
+      </NotAuthenticatedRoute>
+    ),
     children: [
       {
         index: true,
@@ -61,7 +69,11 @@ export const appRouter = createBrowserRouter([
   //Admin routes
   {
     path: "/admin",
-    element: <AdminLayout></AdminLayout>,
+    element: (
+      <AdminRoute>
+        <AdminLayout></AdminLayout>
+      </AdminRoute>
+    ),
     children: [
       {
         index: true,
