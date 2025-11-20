@@ -10,7 +10,6 @@ type AuthState = {
   token: string | null;
   authStatus: AuthStatus;
   //Getters
-  getInitials: (fullname: string) => string;
   isAdmin: () => boolean;
 
   //Actions
@@ -24,15 +23,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   token: null,
   authStatus: "cheking",
 
-  //Getters
-  getInitials(fullname: string) {
-    const nameSplited = fullname.split(" ");
-    const initials = nameSplited.map((n) => {
-      return n.substring(0, 1);
-    });
-    return initials.join("");
-  },
-
+  //Getter
   isAdmin: () => {
     const roles = get().user?.roles || [];
     return roles.includes("admin");

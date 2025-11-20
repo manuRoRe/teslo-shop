@@ -1,7 +1,29 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Search, Bell, MessageSquare, Settings } from "lucide-react";
+import { useAuthStore } from "@/auth/store/auth.store";
+import { getInitials } from "@/lib/initials-by-fullname";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router";
 
 export const AdminHeader: React.FC = () => {
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key !== "Enter") return;
+
+    const query = inputRef.current?.value;
+
+    if (!query) {
+      navigate("/admin/products");
+      return;
+    }
+
+    navigate(`/admin/products?query=${query}`);
+  };
+
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4 h-18">
       <div className="flex items-center justify-between">
@@ -14,6 +36,8 @@ export const AdminHeader: React.FC = () => {
             />
             <input
               type="text"
+              ref={inputRef}
+              onKeyDown={handleSearch}
               placeholder="Search..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />
@@ -22,6 +46,14 @@ export const AdminHeader: React.FC = () => {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
+          <Button
+            variant={"ghost"}
+            size={"sm"}
+            className="ml-2"
+            onClick={() => navigate("/")}
+          >
+            Inicio
+          </Button>
           <button className="relative p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
             <Bell size={20} />
             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
@@ -36,7 +68,7 @@ export const AdminHeader: React.FC = () => {
           </button>
 
           <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm cursor-pointer hover:shadow-lg transition-shadow">
-            JD
+            {user ? getInitials(user?.fullName) : "?"}
           </div>
         </div>
       </div>

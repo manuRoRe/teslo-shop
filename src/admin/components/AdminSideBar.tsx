@@ -14,6 +14,7 @@ import {
 import { CustomLogo } from "@/components/custom/CustomLogo";
 import { Link, useLocation } from "react-router";
 import { useAuthStore } from "@/auth/store/auth.store";
+import { getInitials } from "@/lib/initials-by-fullname";
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -25,7 +26,7 @@ export const AdminSidebar: React.FC<SidebarProps> = ({
   onToggle,
 }) => {
   const { pathname } = useLocation();
-  const { user, getInitials } = useAuthStore();
+  const { user } = useAuthStore();
 
   const menuItems = [
     { icon: Home, label: "Dashboard", to: "/admin" },

@@ -9,10 +9,14 @@ import {
   TableCell,
   Table,
 } from "@/components/ui/table";
-import { PlusIcon } from "lucide-react";
+import { currencyFormatter } from "@/lib/currency-formatter";
+import { useProducts } from "@/shop/hooks/useProducts";
+import { PencilIcon, PlusIcon } from "lucide-react";
 import { Link } from "react-router";
 
 export const AdminProductsPage = () => {
+  const { data } = useProducts();
+
   return (
     <>
       <div className="flex justify-between items-center">
@@ -33,38 +37,42 @@ export const AdminProductsPage = () => {
       <Table className="bg-white p-10 shadow-xs border border-gray-200 mb-10">
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>Imagen</TableHead>
             <TableHead>Nombre</TableHead>
             <TableHead>Precio</TableHead>
             <TableHead>Categoria</TableHead>
             <TableHead>Inventario</TableHead>
             <TableHead>Tallas</TableHead>
-            <TableHead className="text-right">Acciones</TableHead>
+            <TableHead>Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium text-center">1</TableCell>
-            <TableCell>
-              <img
-                src="https://placehold.co/250x250"
-                alt="product"
-                className="w-20 h-20 object-cover rounded-md"
-              />
-            </TableCell>
-            <TableCell>Producto</TableCell>
-            <TableCell>$250.00</TableCell>
-            <TableCell>Categoria 1</TableCell>
-            <TableCell>100 stock</TableCell>
-            <TableCell>XS,S,L</TableCell>
-            <TableCell className="text-right">
-              <Link to="/admin/products/t-shirt">Editar</Link>
-            </TableCell>
-          </TableRow>
+          {data?.products.map((prod) => (
+            <TableRow key={prod.id}>
+              <TableCell>
+                <img
+                  src={prod.images?.[0] ?? "https://placehold.co/250x250"}
+                  alt={prod.title}
+                  className="w-20 h-20 object-cover rounded-md"
+                />
+              </TableCell>
+              <TableCell className="underline hover:text-blue-500">
+                <Link to={`/admin/products/${prod.id}`}>{prod.title}</Link>
+              </TableCell>
+              <TableCell>{currencyFormatter(prod.price)}</TableCell>
+              <TableCell>{prod.gender ?? prod.tags?.[0] ?? "-"}</TableCell>
+              <TableCell>{prod.stock} stock</TableCell>
+              <TableCell>{prod.sizes?.join(",")}</TableCell>
+              <TableCell>
+                <Link to={`/admin/products/${prod.id}`}>
+                  <PencilIcon className="text-blue-500" />
+                </Link>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
-      <CustomPagination totalPages={8}></CustomPagination>
+      <CustomPagination totalPages={data?.pages || 1}></CustomPagination>
     </>
   );
 };
