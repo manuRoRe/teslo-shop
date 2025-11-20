@@ -11,6 +11,7 @@ type AuthState = {
   authStatus: AuthStatus;
   //Getters
   getInitials: (fullname: string) => string;
+  isAdmin: () => boolean;
 
   //Actions
   login: (email: string, password: string) => Promise<boolean>;
@@ -18,10 +19,24 @@ type AuthState = {
   checkAuthStatus: () => Promise<boolean>;
 };
 
-export const useAuthStore = create<AuthState>()((set) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   user: null,
   token: null,
   authStatus: "cheking",
+
+  //Getters
+  getInitials(fullname: string) {
+    const nameSplited = fullname.split(" ");
+    const initials = nameSplited.map((n) => {
+      return n.substring(0, 1);
+    });
+    return initials.join("");
+  },
+
+  isAdmin: () => {
+    const roles = get().user?.roles || [];
+    return roles.includes("admin");
+  },
 
   //Actions
   login: async (email: string, password: string) => {
@@ -45,14 +60,6 @@ export const useAuthStore = create<AuthState>()((set) => ({
   logout: () => {
     set({ user: undefined, token: undefined, authStatus: "not-authenticated" });
     localStorage.removeItem("token");
-  },
-
-  getInitials(fullname: string) {
-    const nameSplited = fullname.split(" ");
-    const initials = nameSplited.map((n) => {
-      return n.substring(0, 1);
-    });
-    return initials.join("");
   },
 
   checkAuthStatus: async () => {
