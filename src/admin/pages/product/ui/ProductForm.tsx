@@ -131,7 +131,7 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                       "w-full px-4 py-3 border  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     )}
                     placeholder="Título del producto"
-                  />{" "}
+                  />
                   {errors.title && (
                     <p className="text-red-500 text-xs ml-1">
                       El titulo es requerido
@@ -146,14 +146,21 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                     </label>
                     <input
                       type="number"
-                      {...register("price")}
-                      /* value={product.price}
-                      onChange={(e) =>
-                        handleInputChange("price", parseFloat(e.target.value))
-                      } */
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      {...register("price", {
+                        required: true,
+                        min: 1,
+                      })}
+                      className={cn(
+                        errors.price ? "border-red-300" : "border-slate-300",
+                        "w-full px-4 py-3 border  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      )}
                       placeholder="Precio del producto"
                     />
+                    {errors.price && (
+                      <p className="text-red-500 text-xs ml-1">
+                        El precio debe ser mayor que 0
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -162,14 +169,21 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                     </label>
                     <input
                       type="number"
-                      {...register("stock")}
-                      /* value={product.stock}
-                      onChange={(e) =>
-                        handleInputChange("stock", parseInt(e.target.value))
-                      } */
-                      className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      {...register("stock", {
+                        required: true,
+                        min: 1,
+                      })}
+                      className={cn(
+                        errors.stock ? "border-red-300" : "border-slate-300",
+                        "w-full px-4 py-3 border  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                      )}
                       placeholder="Stock del producto"
                     />
+                    {errors.stock && (
+                      <p className="text-red-500 text-xs ml-1">
+                        El Stock debe ser mayor que 0
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -179,12 +193,23 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                   </label>
                   <input
                     type="text"
-                    {...register("slug")}
-                    /* value={product.slug}
-                    onChange={(e) => handleInputChange("slug", e.target.value)} */
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    {...register("slug", {
+                      required: true,
+                      validate: (value) =>
+                        !/\s/.test(value) ||
+                        "El slug no puede contener espacios en blanco",
+                    })}
+                    className={cn(
+                      errors.slug ? "border-red-300" : "border-slate-300",
+                      "w-full px-4 py-3 border  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    )}
                     placeholder="Slug del producto"
                   />
+                  {errors.slug && (
+                    <p className="text-red-500 text-xs ml-1">
+                      {errors.slug.message || "El slug es obligatorio"}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -193,10 +218,6 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                   </label>
                   <select
                     {...register("gender")}
-                    /* value={product.gender}
-                    onChange={(e) =>
-                      handleInputChange("gender", e.target.value)
-                    } */
                     className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
                     <option value="men">Hombre</option>
@@ -211,15 +232,25 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                     Descripción del producto
                   </label>
                   <textarea
-                    {...register("description")}
+                    {...register("description", { required: true })}
                     /* value={product.description}
                     onChange={(e) =>
                       handleInputChange("description", e.target.value)
                     } */
                     rows={5}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
+                    className={cn(
+                      errors.description
+                        ? "border-red-300"
+                        : "border-slate-300",
+                      "w-full px-4 py-3 border  rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    )}
                     placeholder="Descripción del producto"
                   />
+                  {errors.description && (
+                    <p className="text-red-500 text-xs ml-1">
+                      La descripcion es obligatorio
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
