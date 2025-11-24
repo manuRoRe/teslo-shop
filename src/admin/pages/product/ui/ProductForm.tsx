@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import type { Size } from "@/types/common";
 
 interface Props {
   title: string;
@@ -13,7 +14,7 @@ interface Props {
   product: Product;
 }
 
-const availableSizes = ["XS", "S", "M", "L", "XL", "XXL"];
+const availableSizes: Size[] = ["XS", "S", "M", "L", "XL", "XXL"];
 
 export const ProductForm = ({ product, subtitle, title }: Props) => {
   const [dragActive, setDragActive] = useState(false);
@@ -21,10 +22,15 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
   const {
     register,
     handleSubmit,
+    getValues,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: product,
   });
+
+  const sizesSelected = watch("sizes");
 
   const addTag = () => {
     /* if (newTag.trim() && !product.tags.includes(newTag.trim())) {
@@ -43,20 +49,27 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
     })); */
   };
 
-  const addSize = (size: string) => {
-    /* if (!product.sizes.includes(size)) {
-      setProduct((prev) => ({
-        ...prev,
-        sizes: [...prev.sizes, size],
-      }));
-    } */
+  const addSize = (size: Size) => {
+    /*
+    Se puede hacer con un set para evitar duplicados 
+    y ahorrar algo de logica
+    
+    const sizeSet=new Set(getValues("sizes")) 
+    */
+
+    const currentSizes: Size[] = getValues("sizes") ?? [];
+
+    if (!currentSizes.includes(size)) {
+      setValue("sizes", [...currentSizes, size]);
+    }
   };
 
-  const removeSize = (sizeToRemove: string) => {
-    /* setProduct((prev) => ({
-      ...prev,
-      sizes: prev.sizes.filter((size) => size !== sizeToRemove),
-    })); */
+  const removeSize = (sizeToRemove: Size) => {
+    if (getValues("sizes").includes(sizeToRemove)) {
+      const updatedSizes: Size[] =
+        getValues("sizes").filter((size) => size !== sizeToRemove) ?? [];
+      setValue("sizes", [...updatedSizes]);
+    }
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -233,10 +246,6 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                   </label>
                   <textarea
                     {...register("description", { required: true })}
-                    /* value={product.description}
-                    onChange={(e) =>
-                      handleInputChange("description", e.target.value)
-                    } */
                     rows={5}
                     className={cn(
                       errors.description
@@ -263,15 +272,21 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
+                  {/* Lo hago de esta manera para que las tallas esten ordenadas de menor a mayor */}
+                  {availableSizes.map((size) => (
                     <span
                       key={size}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                      className={cn(
+                        sizesSelected.includes(size)
+                          ? "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                          : "hidden"
+                      )}
                     >
                       {size}
                       <button
-                        // onClick={() => removeSize(size)}
-                        className="ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                        type="button"
+                        onClick={() => removeSize(size)}
+                        className="cursor-pointer ml-2 text-blue-600 hover:text-blue-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
                       </button>
@@ -286,13 +301,14 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                   {availableSizes.map((size) => (
                     <button
                       key={size}
-                      /* onClick={() => addSize(size)}
-                      disabled={product.sizes.includes(size)} */
-                      /* className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
-                        product.sizes.includes(size)
+                      type="button"
+                      onClick={() => addSize(size)}
+                      disabled={sizesSelected.includes(size)}
+                      className={`px-3 py-1 rounded-full text-sm font-medium transition-all duration-200 ${
+                        sizesSelected.includes(size)
                           ? "bg-slate-100 text-slate-400 cursor-not-allowed"
                           : "bg-slate-200 text-slate-700 hover:bg-slate-300 cursor-pointer"
-                      }`} */
+                      }`}
                     >
                       {size}
                     </button>
