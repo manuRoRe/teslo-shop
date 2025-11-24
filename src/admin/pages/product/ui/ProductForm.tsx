@@ -32,6 +32,7 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
 
   const sizesSelected = watch("sizes");
   const tagsSelected = watch("tags");
+  const stockSelected = watch("stock");
 
   const tagInput = useRef<HTMLInputElement>(null);
 
@@ -467,18 +468,18 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                   </span>
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      product.stock > 5
+                      stockSelected > 5
                         ? "bg-green-100 text-green-800"
-                        : product.stock > 0
+                        : stockSelected > 0
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {product.stock > 5
-                      ? "En stock"
-                      : product.stock > 0
-                      ? "Bajo stock"
-                      : "Sin stock"}
+                    {stockSelected > 5
+                      ? " En stock"
+                      : stockSelected > 0
+                      ? " Bajo stock"
+                      : " Sin stock"}
                   </span>
                 </div>
 
@@ -496,7 +497,7 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                     Tallas disponibles
                   </span>
                   <span className="text-sm text-slate-600">
-                    {product.sizes.length} tallas
+                    {sizesSelected.length} tallas
                   </span>
                 </div>
               </div>
