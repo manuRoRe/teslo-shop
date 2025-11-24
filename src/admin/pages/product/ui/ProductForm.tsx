@@ -1,8 +1,8 @@
 import { AdminTitle } from "@/admin/components/AdminTitle";
 import { Button } from "@/components/ui/button";
 import type { Product } from "@/interfaces/product.interface";
-import { X, SaveAll, Tag, Upload } from "lucide-react";
-import { useState } from "react";
+import { X, SaveAll, Tag, Upload, Plus } from "lucide-react";
+import { useRef, useState } from "react";
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { cn } from "@/lib/utils";
@@ -31,22 +31,24 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
   });
 
   const sizesSelected = watch("sizes");
+  const tagsSelected = watch("tags");
+
+  const tagInput = useRef<HTMLInputElement>(null);
 
   const addTag = () => {
-    /* if (newTag.trim() && !product.tags.includes(newTag.trim())) {
-      setProduct((prev) => ({
-        ...prev,
-        tags: [...prev.tags, newTag.trim()],
-      }));
-      setNewTag("");
-    } */
+    const newTag = tagInput.current!.value.trim();
+    if (newTag !== "") {
+      const tagSet = new Set(getValues("tags"));
+
+      tagSet.add(newTag);
+      setValue("tags", Array.from(tagSet));
+    }
   };
 
   const removeTag = (tagToRemove: string) => {
-    /* setProduct((prev) => ({
-      ...prev,
-      tags: prev.tags.filter((tag) => tag !== tagToRemove),
-    })); */
+    const tagSet = new Set(getValues("tags"));
+    tagSet.delete(tagToRemove);
+    setValue("tags", Array.from(tagSet));
   };
 
   const addSize = (size: Size) => {
@@ -325,7 +327,7 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
 
               <div className="space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  {product.tags.map((tag) => (
+                  {tagsSelected.map((tag) => (
                     <span
                       key={tag}
                       className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 border border-green-200"
@@ -333,7 +335,8 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                       <Tag className="h-3 w-3 mr-1" />
                       {tag}
                       <button
-                        /* onClick={() => removeTag(tag)} */
+                        type="button"
+                        onClick={() => removeTag(tag)}
                         className="ml-2 text-green-600 hover:text-green-800 transition-colors duration-200"
                       >
                         <X className="h-3 w-3" />
@@ -345,16 +348,28 @@ export const ProductForm = ({ product, subtitle, title }: Props) => {
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    /*  value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && addTag()} */
+                    ref={tagInput}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " " || e.key === ",") {
+                        e.preventDefault();
+                        addTag();
+                        tagInput.current!.value = "";
+                      }
+                    }}
                     placeholder="Añadir nueva etiqueta..."
                     className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   />
-                  //TODO:
-                  {/* <Button onClick={addTag} className="px-4 py-2rounded-lg ">
+
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      addTag();
+                      tagInput.current!.value = "";
+                    }}
+                    className="px-4 py-2rounded-lg "
+                  >
                     <Plus className="h-4 w-4" />
-                  </Button> */}
+                  </Button>
                 </div>
               </div>
             </div>
